@@ -25,3 +25,6 @@ class UserTagTable(db.Model):
     Title = db.Column(db.String(1000))
     CreateTime = db.Column(db.DateTime)
     LastUpdateTime = db.Column(db.DateTime)
+
+    def __str__(self):
+        return str(self.userID) + ' ' + str(self.itemID) + ' ' + str(self.Link) + ' ' + str(self.Tag) +' ' +  str(self.Title) + ' ' + str(self.CreateTime) + ' ' + str(self.LastUpdateTime)
