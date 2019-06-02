@@ -5,6 +5,67 @@ from flask import request, jsonify
 from __init__ import db
 from flask import make_response
 
+@app.route('/display/displayTags', methods=['GET'])
+def display_tags():
+    """ Display tags for a single user
+    URL: /display/displayTags
+    Method: GET
+    Headers:
+        Content-Type: application/json
+    Example Body:  {
+	                    "userID": 123489011
+                    }
+    Required: userID
+    Returns:
+        successful:
+                200: successful. Return example: 
+                {
+                    "status": "success",
+                    "tags": {
+                        " Baidu": 1,
+                        " Google": 2,
+                        " Trash": 1,
+                        " facebook": 1,
+                        " linked": 1,
+                        " q&a": 3,
+                        " school": 5,
+                        "Search Engine": 3,
+                        "education": 1,
+                        "social": 10
+                    }
+                }
+        failed:
+                601: Require parameters not found
+                602: Error when query from database
+    """
+    if 'userID' not in request.json:
+        return make_response(jsonify({"error code": 601, "status": "fail", "ErrorInfo": "Error: userID not found"}), 601)
+
+    userID = int(request.json['userID'])
+
+    #
+    #
+    # Todo: Add validation part
+    #
+    #
+    tags_dict = {}
+    try:
+        items = database.UserTagTable.query.filter(userID==userID).all()
+        for item in items:
+            tags = item.Tag
+            tags = tags.split(',')
+            
+            for tag in tags:
+                if tag in tags_dict:
+                    tags_dict[tag] = tags_dict[tag] + 1
+                else:
+                    tags_dict[tag] = 1
+        return make_response(jsonify({"status": "success", "tags": tags_dict}), 200)
+  
+    except:
+        return make_response(jsonify({"error code": 602, "status": "fail", "ErrorInfo": "Error: can not search item from database"}), 602)
+
+
 @app.route('/display/displayByTime', methods=['GET'])
 def display_by_time():
     """ Display items by selecting time period
